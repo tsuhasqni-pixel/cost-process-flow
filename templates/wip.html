@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>WIP ジャーナル</h1>
+<p class="muted">仕掛品の期首残・当期投入・当期完成を、製品 × 工程 × 期間で入力します。期末仕掛は自動計算（期首 + 投入 − 完成）。</p>
+
+<section class="card">
+  <h2>追加 / 更新</h2>
+  <form method="post" class="form" id="wipForm">
+    <div class="row">
+      <label>製品
+        <select name="product_id" id="prodSelect">
+          {% for p in products %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>工程
+        <select name="process" id="procSelect">
+          <!-- populated by JS -->
+        </select>
+      </label>
+      <label>期間
+        <select name="period">
+          {% for p in periods %}<option value="{{ p }}">{{ p }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="row">
+      <label>期首仕掛<input name="beginning" type="number" step="any" value="0" /></label>
+      <label>当期投入<input name="inputs" type="number" step="any" value="0" /></label>
+      <label>当期完成<input name="completed" type="number" step="any" value="0" /></label>
+    </div>
+    <div class="actions"><button type="submit" class="btn primary">保存</button></div>
+  </form>
+  <script>
+    const PROCESSES = {{ process_options|tojson }};
+    function refreshProcesses() {
+      const pid = document.getElementById('prodSelect').value;
+      const sel = document.getElementById('procSelect');
+      const opts = (PROCESSES[pid] || []);
+      sel.innerHTML = opts.map(p => `<option value="${p}">${p}</option>`).join('');
+    }
+    document.getElementById('prodSelect').addEventListener('change', refreshProcesses);
+    refreshProcesses();
+  </script>
+</section>
+
+<section class="card">
+  <h2>登録済みエントリ</h2>
+  {% if entries %}
+  <table class="grid">
+    <thead><tr><th>製品</th><th>工程</th><th>期間</th><th>期首</th><th>投入</th><th>完成</th><th>期末</th><th></th></tr></thead>
+    <tbody>
+    {% for e in entries %}
+    <tr>
+      <td>{% for p in products if p.id == e.product_id %}{{ p.name }}{% endfor %}</td>
+      <td>{{ e.process }}</td>
+      <td>{{ e.period }}</td>
+      <td class="right">{{ e.beginning }}</td>
+      <td class="right">{{ e.inputs }}</td>
+      <td class="right">{{ e.completed }}</td>
+      <td class="right">{{ e.beginning + e.inputs - e.completed }}</td>
+      <td>
+        <form method="post" action="{{ url_for('wip_delete') }}" style="display:inline" onsubmit="return confirm('削除します。よろしいですか?');">
+          <input type="hidden" name="product_id" value="{{ e.product_id }}" />
+          <input type="hidden" name="process" value="{{ e.process }}" />
+          <input type="hidden" name="period" value="{{ e.period }}" />
+          <button class="btn danger" type="submit">削除</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p class="muted">エントリがありません。</p>{% endif %}
+</section>
+{% endblock %}

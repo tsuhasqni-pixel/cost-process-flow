@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>JSON アップロード</h1>
+<section class="card">
+  <p>internal-accounting の <strong>JSONエクスポート</strong>ボタンで出力したファイルをアップロードしてください。製品マスタの「労務工程」を読んで工程フロー図を自動生成します。</p>
+  <form method="post" enctype="multipart/form-data" class="form">
+    <label>JSONファイル<input type="file" name="file" accept="application/json" required /></label>
+    <div class="actions">
+      <button type="submit" class="btn primary">読み込む</button>
+      {% if loaded %}<a class="btn ghost" href="{{ url_for('flow_list') }}">既存データで続行</a>{% endif %}
+    </div>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ flow.product_name }} — {{ flow.period }}</h1>
+
+<section class="card">
+  <ul class="kv kv-grid">
+    <li><span>モード</span><b>{{ "詳細" if flow.mode == "detailed" else "簡易" }}</b></li>
+    <li><span>工程数</span><b>{{ flow.nodes|selectattr('kind','equalto','process')|list|length }}</b></li>
+    <li><span>総差異</span><b>{{ flow.total_variance|signed_yen }}</b></li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2>工程フロー図</h2>
+  {{ svg }}
+</section>
+
+<section class="card">
+  <h2>工程別差異</h2>
+  <table class="grid">
+    <thead><tr><th>工程</th><th>賃率差異</th><th>時間差異</th><th>合計</th><th>期首仕掛</th><th>投入</th><th>完成</th><th>期末仕掛</th></tr></thead>
+    <tbody>
+    {% for n in flow.nodes if n.kind == "process" %}
+    <tr>
+      <td>{{ n.label }}</td>
+      <td class="right">{{ n.rate_var|signed_yen }}</td>
+      <td class="right">{{ n.time_var|signed_yen }}</td>
+      <td class="right">{{ n.total_var|signed_yen }}</td>
+      <td class="right">{{ n.wip.beginning if n.wip else '—' }}</td>
+      <td class="right">{{ n.wip.inputs if n.wip else '—' }}</td>
+      <td class="right">{{ n.wip.completed if n.wip else '—' }}</td>
+      <td class="right">{{ n.wip.ending if n.wip else '—' }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<p><a class="btn ghost" href="{{ url_for('flow_list') }}">← 一覧へ戻る</a></p>
+{% endblock %}

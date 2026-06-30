@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>製造工程フロー / WIP（ブラウザ版）</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="topnav">
+    <div class="brand">製造工程フロー / WIP（静的版）</div>
+    <a href="#" data-tab="flow">工程フロー</a>
+    <a href="#" data-tab="wip">WIP ジャーナル</a>
+    <a href="#" data-tab="origin">差異の出所マップ</a>
+    <span class="spacer"></span>
+    <label class="btn ghost" for="fileImport">JSONインポート<input id="fileImport" type="file" accept="application/json" hidden /></label>
+    <button id="btnReset" class="btn danger" type="button">データを破棄</button>
+  </nav>
+
+  <main class="container">
+    <section id="tab-empty" class="tab">
+      <h1>はじめに</h1>
+      <section class="card">
+        <p>internal-accounting の <strong>JSONエクスポート</strong>を読み込むと、製品マスタの労務工程から工程フロー図を自動描画します。WIP（仕掛品）残高は本ツール内で別途入力できます。</p>
+        <p class="muted">「詳細モード」かつ複数工程の labors を持つ製品で効果を発揮します。</p>
+      </section>
+    </section>
+
+    <section id="tab-flow" class="tab" hidden>
+      <h1>工程フロー</h1>
+      <section class="card">
+        <h2>製品 × 期間 一覧</h2>
+        <div id="flowList"></div>
+      </section>
+      <section class="card" id="flowDetailCard" hidden>
+        <h2 id="flowDetailTitle">フロー図</h2>
+        <div id="flowSvg"></div>
+        <div id="flowDetailTable"></div>
+      </section>
+    </section>
+
+    <section id="tab-wip" class="tab" hidden>
+      <h1>WIP ジャーナル</h1>
+      <section class="card">
+        <h2>追加 / 更新</h2>
+        <form id="wipForm" class="form">
+          <div class="row">
+            <label>製品<select name="product_id" id="wipProd"></select></label>
+            <label>工程<select name="process" id="wipProc"></select></label>
+            <label>期間<select name="period" id="wipPeriod"></select></label>
+          </div>
+          <div class="row">
+            <label>期首仕掛<input name="beginning" type="number" step="any" value="0" /></label>
+            <label>当期投入<input name="inputs" type="number" step="any" value="0" /></label>
+            <label>当期完成<input name="completed" type="number" step="any" value="0" /></label>
+          </div>
+          <div class="actions"><button type="submit" class="btn primary">保存</button></div>
+        </form>
+      </section>
+      <section class="card"><h2>登録済み</h2><div id="wipList"></div></section>
+    </section>
+
+    <section id="tab-origin" class="tab" hidden>
+      <h1>差異の出所マップ</h1>
+      <section class="card"><div id="originContent"></div></section>
+    </section>
+  </main>
+
+  <footer><small>internal-accounting JSON 連携 / 工程ボックス図・WIP 管理 — 静的版（GitHub Pages）</small></footer>
+  <script src="app.js"></script>
+</body>
+</html>

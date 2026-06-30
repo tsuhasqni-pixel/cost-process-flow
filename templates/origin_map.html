@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>差異の出所マップ</h1>
+<p class="muted">同名の工程を全製品で集計し、どの工程が継続的に不利／有利かを表示します。</p>
+
+<section class="card">
+{% if rows %}
+<table class="grid">
+  <thead><tr><th>工程</th><th>登場回数</th><th>賃率差異</th><th>時間差異</th><th>合計</th><th>関連製品</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.process }}</td>
+    <td class="right">{{ r.appearances }}</td>
+    <td class="right">{{ r.rate_var|signed_yen }}</td>
+    <td class="right">{{ r.time_var|signed_yen }}</td>
+    <td class="right">{{ r.total_var|signed_yen }}</td>
+    <td class="small muted">{{ r.products|join('、') }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}<p class="muted">詳細モードの実績データがありません。</p>{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}製造工程フロー / WIP{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <nav class="topnav">
+    <div class="brand">製造工程フロー / WIP</div>
+    <a href="{{ url_for('flow_list') }}">工程フロー</a>
+    <a href="{{ url_for('wip_page') }}">WIP ジャーナル</a>
+    <a href="{{ url_for('origin_page') }}">差異の出所マップ</a>
+    <span class="spacer"></span>
+    <form method="post" action="{{ url_for('reset') }}" style="display:inline" onsubmit="return confirm('読込済みデータを破棄します。よろしいですか?');">
+      <button class="btn ghost" type="submit">データを破棄</button>
+    </form>
+    <a class="btn ghost" href="{{ url_for('index') }}">再アップロード</a>
+  </nav>
+  <main class="container">{% block content %}{% endblock %}</main>
+  <footer><small>internal-accounting JSON 連携 / 工程ボックス図・WIP 管理</small></footer>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>工程フロー（製品 × 期間）</h1>
+{% if flows %}
+<table class="grid">
+  <thead><tr><th>製品</th><th>モード</th><th>期間</th><th>工程数</th><th>総差異</th><th>操作</th></tr></thead>
+  <tbody>
+  {% for f in flows %}
+  <tr>
+    <td>{{ f.product_name }}</td>
+    <td>{{ "詳細" if f.mode == "detailed" else "簡易" }}</td>
+    <td>{{ f.period }}</td>
+    <td>{{ f.nodes|selectattr('kind','equalto','process')|list|length }}</td>
+    <td class="right">{{ f.total_variance|signed_yen }}</td>
+    <td><a class="btn ghost" href="{{ url_for('flow_detail', product_id=f.product_id, period=f.period) }}">フロー図を見る</a></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="muted">実績データがありません。</p>
+{% endif %}
+{% endblock %}
